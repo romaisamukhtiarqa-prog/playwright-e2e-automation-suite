@@ -1,4 +1,4 @@
-class CheckoutPage {
+﻿class CheckoutPage {
   constructor(page) {
     this.page = page;
     this.catalogSection = page.getByTestId('catalog-section');
@@ -14,7 +14,7 @@ class CheckoutPage {
   }
 
   async gotoCheckoutWithApple() {
-    await this.page.goto('http://localhost:3000/');
+    await this.page.goto('http://127.0.0.1:3000/');
     await this.addAppleBtn.click();
     await this.navCart.click();
     await this.proceedCheckoutBtn.click();

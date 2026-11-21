@@ -37,7 +37,7 @@ test.describe('GreenLeaf Grocers — POM E2E, Mobile & API Suite', () => {
   });
 
   test('TC-API-03: Promo validation API returns 200 for WELCOME10 and 400 for EXPIRED20', async ({ request }) => {
-    const validRes = await request.post('http://localhost:3000/api/promos/validate', {
+    const validRes = await request.post('http://127.0.0.1:3000/api/promos/validate', {
       data: { code: 'WELCOME10' },
     });
     expect(validRes.status()).toBe(200);
@@ -45,7 +45,7 @@ test.describe('GreenLeaf Grocers — POM E2E, Mobile & API Suite', () => {
     expect(validBody.valid).toBe(true);
     expect(validBody.discount_percent ?? validBody.discount ?? validBody.percent).toBe(10);
 
-    const expiredRes = await request.post('http://localhost:3000/api/promos/validate', {
+    const expiredRes = await request.post('http://127.0.0.1:3000/api/promos/validate', {
       data: { code: 'EXPIRED20' },
     });
     expect(expiredRes.status()).toBe(400);
