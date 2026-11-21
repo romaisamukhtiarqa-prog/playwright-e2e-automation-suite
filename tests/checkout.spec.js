@@ -1,5 +1,5 @@
 ﻿const { test, expect } = require('@playwright/test');
-const { CheckoutPage } = require('../pages/CheckoutPage');
+const { CheckoutPage } = require('../Pages/CheckoutPage');
 const { DatabaseSync } = require('node:sqlite');
 
 test.describe('GreenLeaf Grocers — POM E2E, Mobile & API Suite', () => {
@@ -17,7 +17,7 @@ test.describe('GreenLeaf Grocers — POM E2E, Mobile & API Suite', () => {
 
     await expect(checkoutPage.confirmationBanner).toBeVisible();
 
-    const db = new DatabaseSync('database-validation/greenleaf.db');
+    const db = new DatabaseSync('Database-validation/greenleaf.db');
     const row = db
       .prepare('SELECT o.order_code, o.status, u.email FROM orders o JOIN users u ON o.user_id = u.id WHERE u.email = ?')
       .get(guestEmail);

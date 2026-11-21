@@ -2,7 +2,7 @@
 const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
 
-// 1. Real SQLite Database setup inside database-validation/greenleaf.db
+// 1. Real SQLite Database setup inside Database-validation/greenleaf.db
 const dbPath = path.join(__dirname, 'database-validation', 'greenleaf.db');
 const db = new DatabaseSync(dbPath);
 db.exec('PRAGMA foreign_keys = ON;');
