@@ -20,14 +20,13 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
-        run: npm install @playwright/test
+      - name: Install Playwright
+        run: npm install @playwright/test && npx playwright install --with-deps chromium
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Run Playwright POM, Mobile & API Suite
-        run: npx playwright test tests/checkout.spec.js --project=chromium
+      - name: Run GreenLeaf POM, Mobile & API Suite
+        run: |
+          node -e "const fs=require('fs'); if(fs.existsSync('Database-validation/greenleaf.db')){fs.mkdirSync('database-validation',{recursive:true}); fs.copyFileSync('Database-validation/greenleaf.db','database-validation/greenleaf.db');}"
+          npx playwright test tests/checkout.spec.js --project=chromium
 
       - name: Upload Playwright HTML Report
         uses: actions/upload-artifact@v4
