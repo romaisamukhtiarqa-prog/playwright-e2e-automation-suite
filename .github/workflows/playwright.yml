@@ -1,4 +1,4 @@
-name: GreenLeaf Grocers Playwright CI
+﻿name: GreenLeaf Grocers Playwright CI
 
 on:
   push:
@@ -26,13 +26,8 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Start GreenLeaf server and run Playwright POM suite
-        run: |
-          node app.js &
-          SERVER_PID=$!
-          sleep 2
-          npx playwright test tests/checkout.spec.js
-          kill $SERVER_PID
+      - name: Run Playwright POM suite
+        run: npx playwright test tests/checkout.spec.js
 
       - name: Upload Playwright HTML Report
         uses: actions/upload-artifact@v4
