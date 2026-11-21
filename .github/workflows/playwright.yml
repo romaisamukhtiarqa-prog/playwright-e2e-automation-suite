@@ -1,4 +1,4 @@
-﻿name: GreenLeaf Grocers Playwright CI
+name: GreenLeaf Grocers Playwright CI
 
 on:
   push:
@@ -21,13 +21,13 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm ci || npm install
+        run: npm install @playwright/test
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright POM suite
-        run: npx playwright test tests/checkout.spec.js
+      - name: Run Playwright POM, Mobile & API Suite
+        run: npx playwright test tests/checkout.spec.js --project=chromium
 
       - name: Upload Playwright HTML Report
         uses: actions/upload-artifact@v4
