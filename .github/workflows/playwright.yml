@@ -1,0 +1,44 @@
+name: GreenLeaf Grocers Playwright CI
+
+on:
+  push:
+    branches: [ main, master, 'feature/**' ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  e2e-api-mobile-tests:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        run: npm install @playwright/test && npx playwright install --with-deps chromium
+
+      - name: Initialize single shared SQLite DB, start server, and run Playwright suite
+        run: |
+          rm -rf Database-validation/greenleaf.db database-validation
+          mkdir -p Database-validation
+          ln -s Database-validation database-validation
+          node -e "const { DatabaseSync } = require('node:sqlite'); const db = new DatabaseSync('Database-validation/greenleaf.db'); db.exec('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT UNIQUE, address TEXT); CREATE TABLE orders (id INTEGER PRIMARY KEY AUTOINCREMENT, order_code TEXT, user_id INTEGER, item TEXT, total REAL, discount REAL DEFAULT 0, promo_code TEXT, status TEXT, created_at TEXT); CREATE TABLE promos (code TEXT PRIMARY KEY, discount_percent INTEGER, active INTEGER); INSERT INTO promos VALUES (\'WELCOME10\', 10, 1), (\'EXPIRED20\', 20, 0);'); db.close();"
+          node app.js &
+          SERVER_PID=$!
+          node -e "const http=require('http'); (function check(n){ http.get('http://127.0.0.1:3000', res => process.exit(0)).on('error', () => { if(n>30) process.exit(1); setTimeout(()=>check(n+1), 1000); }); })(0);"
+          npx playwright test tests/checkout.spec.js --project=chromium
+          kill $SERVER_PID || true
+
+      - name: Upload Playwright HTML Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
