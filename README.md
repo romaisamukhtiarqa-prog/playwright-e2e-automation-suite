@@ -15,7 +15,6 @@ End-to-end Quality Assurance portfolio demonstrating **Page Object Model (POM)**
 ---
 
 ## Project Structure
-```text
 ├── .github/workflows/
 │   └── playwright.yml            # Automated CI pipeline running Playwright on push & PR
 ├── Api-testing/
@@ -36,3 +35,24 @@ End-to-end Quality Assurance portfolio demonstrating **Page Object Model (POM)**
 │   └── checkout.spec.js          # Multi-layer Playwright test suite (E2E + DB + Mobile + API)
 ├── app.js                        # Local GreenLeaf Grocers storefront, REST API & SQLite backend
 └── playwright_pom_report.png     # 9/9 cross-browser Playwright execution report
+
+---
+
+## Test Coverage Summary
+| Layer | Test ID / Suite | Coverage & Assertions | Status |
+| :--- | :--- | :--- | :---: |
+| **E2E UI + DB** | `TC-E2E-01` | Guest checkout happy path + direct SQLite `orders`/`users` persistence check | PASS |
+| **Mobile UI** | `TC-MOB-02` | Mobile viewport (`390x844`) bounding-box collision check for checkout controls | PASS |
+| **API Contract** | `TC-API-03` | `POST /api/promos/validate` (`WELCOME10` -> `200 OK`, `EXPIRED20` -> `400 Bad Request`) | PASS |
+| **Postman Suite** | `TC-API-01` – `12` | Catalog lookup, boundary values (`quantity: 0`), type checks, and `409 Conflict` idempotency | PASS (`24/24`) |
+| **SQLite Audit** | `queries.sql` | Relational `JOIN` accuracy, revenue/discount totals, and `0` orphan foreign-key records | PASS |
+| **Performance / Load** | `k6` Load Suite | 20 concurrent VUs (`35s`), `1,580` requests (`44.81 req/s`), `p(95) = 1.15ms`, `0.00%` error rate | PASS |
+
+---
+
+## How to Run Locally
+1. Install dependencies & Playwright browsers: `npm install && npx playwright install`
+2. Start the GreenLeaf Grocers server (Terminal 1): `node app.js`
+3. Execute the multi-layer Playwright test suite (Terminal 2): `npx playwright test tests/checkout.spec.js`
+4. Run SQLite backend validation queries: `node Database-validation/run_queries.js`
+5. Run Grafana k6 performance & load test (while `app.js` is running): `k6 run performance/load_test.js`
